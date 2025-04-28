@@ -1,0 +1,160 @@
+package com.example.spring_basics.controller;
+//
+//import com.example.spring_basics.model.User;
+//import com.example.spring_basics.service.UserService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.*;
+import java.io.*;
+
+import java.util.List;
+
+@RestController
+@CrossOrigin("*")
+@RequestMapping("/api")
+public class UserController {
+//
+//    @Autowired
+//    private UserService userService;
+//
+//    @PostMapping("/add")
+//    public ResponseEntity<?>createUser(@RequestBody User user){
+//        User userObj=userService.createUser(user);
+//        return userObj !=null ? ResponseEntity.ok(userObj) : ResponseEntity.badRequest().build();
+//    }
+//
+//    @GetMapping("/get/{roll}")
+//    public ResponseEntity<?>getByRoll(@PathVariable ("roll") Long rollNo ){
+//        User userObj=userService.getByRoll(rollNo);
+//        return userObj !=null ? ResponseEntity.ok(userObj) : ResponseEntity.notFound().build();
+//    }
+//
+//
+//    @GetMapping("/getAll")
+//    public ResponseEntity<?>getAll(){
+//        List<User> userList=userService.getAll();
+//        return ! userList.isEmpty() ? ResponseEntity.ok(userList) : ResponseEntity.notFound().build();
+//    }
+//
+//
+//    @PutMapping("/updateByRoll/{roll}")
+//    public ResponseEntity<?>updateByRoll(@PathVariable Long roll, @RequestBody User user){
+//        User userObj=userService.updateByRoll(roll,user);
+//        return userObj !=null ? ResponseEntity.ok(userObj) : ResponseEntity.badRequest().build();
+//    }
+//
+//
+//    @PostMapping("/createAllUser")
+//    public ResponseEntity<?>createAll(List<User>users){
+//        List<User>userList=userService.createAll(users);
+//        return !userList.isEmpty() ? ResponseEntity.ok(userList) : ResponseEntity.badRequest().build();
+//    }
+//
+//
+//
+//    @DeleteMapping("/deleteUserByCity/{city}")
+//    public ResponseEntity<?>deleteUserByCity(@PathVariable String city){
+//        try{
+//            userService.deleteUserByCity(city);
+//            return ResponseEntity.noContent().build();
+//        }
+//        catch (Exception e){
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//
+//
+//
+//    @GetMapping("/getByNameAndCity/{name}/{mark}")
+//    public ResponseEntity<?>findUserByNameAndMarks(@PathVariable String name, @PathVariable Double mark){
+//            List<User>users=userService.findUserByNameAndMarks(name,mark);
+//            return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.notFound().build();
+//    }
+
+
+        @PostMapping("/compile/java")
+        public String compileJava(@RequestBody String code) {
+            try {
+                // Save the code to a file
+                FileWriter writer = new FileWriter("Main.java");
+                writer.write(code);
+                writer.close();
+
+                // Compile the file
+                Process compileProcess = Runtime.getRuntime().exec("javac Main.java");
+                compileProcess.waitFor();
+
+                if (compileProcess.exitValue() != 0) {
+                    // Compilation Error
+                    BufferedReader errorReader = new BufferedReader(new InputStreamReader(compileProcess.getErrorStream()));
+                    StringBuilder errorOutput = new StringBuilder();
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        errorOutput.append(line).append("\n");
+                    }
+                    return "Compilation Error:\n" + errorOutput.toString();
+                }
+
+                // Run the compiled class
+                Process runProcess = Runtime.getRuntime().exec("java Main");
+                BufferedReader outputReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
+                StringBuilder output = new StringBuilder();
+                String line;
+                while ((line = outputReader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+
+                return "Program Output:\n" + output.toString();
+
+            } catch (Exception e) {
+                return "Server Error: " + e.getMessage();
+            }
+        }
+
+    @PostMapping("/compile/python")
+    public String compilePython(@RequestBody String code) {
+        try {
+            // Save code to file
+            FileWriter writer = new FileWriter("main.py");
+            writer.write(code);
+            writer.close();
+
+            // Run Python file
+            Process runProcess = Runtime.getRuntime().exec("python main.py");
+
+            // Read standard output
+            BufferedReader outputReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = outputReader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+            // Read error output
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(runProcess.getErrorStream()));
+            StringBuilder errorOutput = new StringBuilder();
+            while ((line = errorReader.readLine()) != null) {
+                errorOutput.append(line).append("\n");
+            }
+
+            // If there are errors, return them
+            if (!errorOutput.isEmpty()) {
+                return "Error:\n" + errorOutput.toString();
+            }
+
+            return "Program Output:\n" + output.toString();
+
+        } catch (Exception e) {
+            return "Server Error: " + e.getMessage();
+        }
+    }
+
+
+
+
+
+
+
+}
